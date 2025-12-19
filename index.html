@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bihar Board Sanskrit Mock Test 2026</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Countdown -->
+        <header class="glass fade-in">
+            <h1 class="app-title">Bihar Board Sanskrit Mock Test 2026</h1>
+            <div class="institute-name">BY प्रगति कोचिंग सेंटर</div>
+            <div class="creator-name">APP CREATE BY HIMANSHU SIR</div>
+            <div class="exam-info">BSEB Matric Sanskrit Exam - 17 फरवरी 2026</div>
+            
+            <!-- Motivational Slogan -->
+            <div class="motivational-slogan glass">
+                <i class="fas fa-quote-left"></i>
+                <span id="randomSlogan">सफलता की ओर कदम बढ़ाओ, संस्कृत सीखो और परीक्षा में उत्तीर्ण हो जाओ!</span>
+                <i class="fas fa-quote-right"></i>
+            </div>
+            
+            <div class="countdown-container">
+                <div class="countdown-box glass">
+                    <div class="countdown-value" id="countdown-days">00</div>
+                    <div class="countdown-label">दिन</div>
+                </div>
+                <div class="countdown-box glass">
+                    <div class="countdown-value" id="countdown-hours">00</div>
+                    <div class="countdown-label">घंटे</div>
+                </div>
+                <div class="countdown-box glass">
+                    <div class="countdown-value" id="countdown-minutes">00</div>
+                    <div class="countdown-label">मिनट</div>
+                </div>
+                <div class="countdown-box glass">
+                    <div class="countdown-value" id="countdown-seconds">00</div>
+                    <div class="countdown-label">सेकंड</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content Sections -->
+        <main id="mainContent">
+            <!-- Section 1: Chapter-wise Mock Test -->
+            <section class="content-section glass fade-in">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-book-open"></i> अध्यायवार मॉक टेस्ट
+                    </h2>
+                    <button class="expand-btn" onclick="toggleSection('peeyushamChapters')">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <p class="section-description">पुस्तक "पीयूषम भाग 2" के किसी भी अध्याय का टेस्ट दें।</p>
+                
+                <div class="chapters-container" id="peeyushamChapters">
+                    <!-- Chapters will be loaded from JavaScript -->
+                </div>
+            </section>
+            
+            <!-- Section 2: Grammar Mock Test -->
+            <section class="content-section glass fade-in">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-language"></i> व्याकरण मॉक टेस्ट
+                    </h2>
+                    <button class="expand-btn" onclick="toggleSection('grammarChapters')">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <p class="section-description">संस्कृत व्याकरण के विशेष टॉपिक्स पर टेस्ट दें।</p>
+                
+                <div class="chapters-container" id="grammarChapters">
+                    <!-- Grammar topics will be loaded from JavaScript -->
+                </div>
+            </section>
+            
+            <!-- Section 3: Practice Quiz -->
+            <section class="content-section glass fade-in">
+                <h2 class="section-title">
+                    <i class="fas fa-graduation-cap"></i> प्रैक्टिस क्विज
+                </h2>
+                <p class="section-description">विभिन्न प्रकार के टेस्ट से अपनी तैयारी जाँचें।</p>
+                
+                <div class="practice-options">
+                    <div class="practice-card glass" onclick="startMiniMock()">
+                        <div class="practice-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>मिनी मॉक टेस्ट</h3>
+                        <p>सभी अध्यायों से 15 प्रश्न</p>
+                        <div class="practice-stats">
+                            <span><i class="far fa-clock"></i> 10 मिनट</span>
+                            <span><i class="far fa-question-circle"></i> 15 प्रश्न</span>
+                        </div>
+                    </div>
+                    
+                    <div class="practice-card glass" onclick="startFullMock()">
+                        <div class="practice-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>फुल मॉक टेस्ट</h3>
+                        <p>सभी अध्याय + व्याकरण से 50 प्रश्न</p>
+                        <div class="practice-stats">
+                            <span><i class="far fa-clock"></i> 60 मिनट</span>
+                            <span><i class="far fa-question-circle"></i> 50 प्रश्न</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Question Test Screen -->
+        <section id="questionContainer" class="question-container">
+            <div class="question-header glass">
+                <div>
+                    <h2 id="currentModeTitle">मिनी मॉक टेस्ट</h2>
+                    <div id="progressText">प्रश्न 1/15</div>
+                    <div id="currentChapter" class="current-chapter"></div>
+                </div>
+                <div class="timer-container">
+                    <button id="pauseBtn" class="btn btn-warning" onclick="togglePause()">
+                        <i class="fas fa-pause"></i> रोकें
+                    </button>
+                    <div class="timer" id="timer">10:00</div>
+                </div>
+            </div>
+            
+            <div id="questionNavigation" class="question-navigation glass">
+                <!-- Question navigation buttons will be generated here -->
+            </div>
+            
+            <div id="questionCard" class="question-card glass fade-in">
+                <div class="question-meta">
+                    <span class="question-type" id="questionType">व्याकरण</span>
+                    <span class="question-chapter" id="questionChapter">मंगलम्</span>
+                </div>
+                
+                <div class="question-text" id="questionText">
+                    संस्कृत भाषा में 'रामः पुस्तकं पठति' इस वाक्य में कौन सा कारक है?
+                </div>
+                
+                <div class="options-container" id="optionsContainer">
+                    <!-- Options will be generated here -->
+                </div>
+            </div>
+            
+            <div class="test-controls">
+                <button id="prevBtn" class="btn btn-secondary" onclick="prevQuestion()">
+                    <i class="fas fa-arrow-left"></i> पिछला प्रश्न
+                </button>
+                
+                <div>
+                    <button id="clearBtn" class="btn btn-secondary" onclick="clearAnswer()">
+                        <i class="fas fa-eraser"></i> चुनाव हटाएं
+                    </button>
+                    <button id="nextBtn" class="btn btn-primary" onclick="nextQuestion()">
+                        अगला प्रश्न <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <button id="submitTestBtn" class="btn btn-danger" onclick="submitTest()">
+                    <i class="fas fa-paper-plane"></i> परीक्षा समाप्त करें
+                </button>
+            </div>
+        </section>
+        
+        <!-- Result Screen -->
+        <section id="resultContainer" class="result-container glass">
+            <h2 class="result-title">परीक्षा परिणाम</h2>
+            <div class="score-display" id="finalScore">12/15</div>
+            <div class="result-details">
+                <div class="result-card glass">
+                    <div class="result-label">सही उत्तर</div>
+                    <div class="result-value" id="correctAnswers">12</div>
+                </div>
+                <div class="result-card glass">
+                    <div class="result-label">गलत उत्तर</div>
+                    <div class="result-value" id="wrongAnswers">3</div>
+                </div>
+                <div class="result-card glass">
+                    <div class="result-label">छोड़े गए</div>
+                    <div class="result-value" id="skippedAnswers">0</div>
+                </div>
+                <div class="result-card glass">
+                    <div class="result-label">समय लिया</div>
+                    <div class="result-value" id="timeTaken">08:24</div>
+                </div>
+            </div>
+            
+            <div class="chapter-analysis glass">
+                <h3 class="text-center mb-20">अध्यायवार प्रदर्शन</h3>
+                <div id="chapterAnalysis">
+                    <!-- Chapter analysis will be generated here -->
+                </div>
+            </div>
+            
+            <div class="test-controls mt-20">
+                <button class="btn btn-accent" onclick="retakeTest()">
+                    <i class="fas fa-redo"></i> फिर से प्रयास करें
+                </button>
+                <button class="btn btn-secondary" onclick="goToHome()">
+                    <i class="fas fa-home"></i> होम पर जाएं
+                </button>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="glass text-center mt-30">
+            <p>© 2025 प्रगति कोचिंग सेंटर. सभी अधिकार सुरक्षित.</p>
+            <p class="footer-contact">
+                <i class="fas fa-envelope"></i> contact@progressivecoaching.com |
+                <i class="fas fa-phone"></i> +91 9939936306
+            </p>
+        </footer>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
