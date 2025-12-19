@@ -13,7 +13,7 @@ const appData = {
     // पीयूषम पुस्तक के अध्याय
     peeyushamChapters: {
         // अध्याय 1: मंगलम्
-        "1. "मंगलम्": {
+        "1. मंगलम्": {
 "description": "मंगल श्लोक",
 "questions": [
 {
