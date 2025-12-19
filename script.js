@@ -168,10 +168,17 @@ function startChapterTest(chapterName, testIndex) {
     const end = Math.min(start + 15, chapterData.questions.length);
     const testQuestions = chapterData.questions.slice(start, end);
     
+    // Add chapter info to each question for tracking
+    const questionsWithChapter = testQuestions.map(q => ({
+        ...q,
+        chapterName: chapterName,
+        chapterType: 'peeyusham'
+    }));
+    
     currentState.mode = 'chapter';
     currentState.chapterName = chapterName;
     currentState.testNumber = testIndex + 1;
-    currentState.questions = [...testQuestions];
+    currentState.questions = questionsWithChapter;
     
     startTest('अध्यायवार टेस्ट', chapterName, testIndex + 1, 15);
 }
@@ -185,27 +192,44 @@ function startGrammarTest(topicName, testIndex) {
     const end = Math.min(start + 15, topicData.questions.length);
     const testQuestions = topicData.questions.slice(start, end);
     
+    // Add chapter info to each question for tracking
+    const questionsWithChapter = testQuestions.map(q => ({
+        ...q,
+        chapterName: topicName,
+        chapterType: 'grammar'
+    }));
+    
     currentState.mode = 'grammar';
     currentState.chapterName = topicName;
     currentState.testNumber = testIndex + 1;
-    currentState.questions = [...testQuestions];
+    currentState.questions = questionsWithChapter;
     
     startTest('व्याकरण टेस्ट', topicName, testIndex + 1, 15);
 }
 
 // Start mini mock test
 function startMiniMock() {
-    // Collect all questions
+    // Collect all questions with chapter info
     let allQuestions = [];
     
-    // Add peeyusham questions
-    for (const chapterData of Object.values(appData.peeyushamChapters)) {
-        allQuestions = allQuestions.concat(chapterData.questions);
+    // Add peeyusham questions with chapter info
+    for (const [chapterName, chapterData] of Object.entries(appData.peeyushamChapters)) {
+        const questionsWithChapter = chapterData.questions.map(q => ({
+            ...q,
+            chapterName: chapterName,
+            chapterType: 'peeyusham'
+        }));
+        allQuestions = allQuestions.concat(questionsWithChapter);
     }
     
-    // Add grammar questions
-    for (const topicData of Object.values(appData.grammarTopics)) {
-        allQuestions = allQuestions.concat(topicData.questions);
+    // Add grammar questions with topic info
+    for (const [topicName, topicData] of Object.entries(appData.grammarTopics)) {
+        const questionsWithTopic = topicData.questions.map(q => ({
+            ...q,
+            chapterName: topicName,
+            chapterType: 'grammar'
+        }));
+        allQuestions = allQuestions.concat(questionsWithTopic);
     }
     
     // Shuffle and take 15 questions
@@ -218,17 +242,27 @@ function startMiniMock() {
 
 // Start full mock test
 function startFullMock() {
-    // Collect all questions
+    // Collect all questions with chapter info
     let allQuestions = [];
     
-    // Add peeyusham questions
-    for (const chapterData of Object.values(appData.peeyushamChapters)) {
-        allQuestions = allQuestions.concat(chapterData.questions);
+    // Add peeyusham questions with chapter info
+    for (const [chapterName, chapterData] of Object.entries(appData.peeyushamChapters)) {
+        const questionsWithChapter = chapterData.questions.map(q => ({
+            ...q,
+            chapterName: chapterName,
+            chapterType: 'peeyusham'
+        }));
+        allQuestions = allQuestions.concat(questionsWithChapter);
     }
     
-    // Add grammar questions
-    for (const topicData of Object.values(appData.grammarTopics)) {
-        allQuestions = allQuestions.concat(topicData.questions);
+    // Add grammar questions with topic info
+    for (const [topicName, topicData] of Object.entries(appData.grammarTopics)) {
+        const questionsWithTopic = topicData.questions.map(q => ({
+            ...q,
+            chapterName: topicName,
+            chapterType: 'grammar'
+        }));
+        allQuestions = allQuestions.concat(questionsWithTopic);
     }
     
     // Shuffle and take 50 questions
@@ -283,13 +317,11 @@ function loadQuestion() {
     document.getElementById('questionText').textContent = question.question;
     
     // Set question type
-    const questionType = currentState.mode === 'grammar' ? 'व्याकरण' : 'पाठ्यपुस्तक';
+    const questionType = question.chapterType === 'grammar' ? 'व्याकरण' : 'पाठ्यपुस्तक';
     document.getElementById('questionType').textContent = questionType;
     
     // Set chapter name
-    if (currentState.chapterName) {
-        document.getElementById('questionChapter').textContent = currentState.chapterName;
-    }
+    document.getElementById('questionChapter').textContent = question.chapterName;
     
     // Update progress
     document.getElementById('progressText').textContent = 
@@ -453,26 +485,46 @@ function togglePause() {
     }
 }
 
-// Submit test
+// Submit test - UPDATED FOR CHAPTER-WISE PERFORMANCE
 function submitTest() {
     if (currentState.timer) {
         clearInterval(currentState.timer);
     }
     
-    // Calculate results
+    // Calculate results and chapter-wise performance
     let correct = 0;
     let wrong = 0;
     let skipped = 0;
     
+    // Object to store chapter-wise performance
+    const chapterPerformance = {};
+    
     currentState.questions.forEach((question, index) => {
         const userAnswer = currentState.answers[index];
+        const chapterName = question.chapterName;
+        
+        // Initialize chapter performance if not exists
+        if (!chapterPerformance[chapterName]) {
+            chapterPerformance[chapterName] = {
+                total: 0,
+                correct: 0,
+                wrong: 0,
+                skipped: 0
+            };
+        }
+        
+        // Update chapter performance
+        chapterPerformance[chapterName].total++;
         
         if (userAnswer === undefined) {
             skipped++;
+            chapterPerformance[chapterName].skipped++;
         } else if (userAnswer === question.answer) {
             correct++;
+            chapterPerformance[chapterName].correct++;
         } else {
             wrong++;
+            chapterPerformance[chapterName].wrong++;
         }
     });
     
@@ -489,24 +541,88 @@ function submitTest() {
     document.getElementById('skippedAnswers').textContent = skipped;
     document.getElementById('timeTaken').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     
+    // Display chapter-wise performance
+    displayChapterPerformance(chapterPerformance);
+    
     // Update progress
-    updateProgress(correct, currentState.questions.length);
+    updateProgress(correct, currentState.questions.length, chapterPerformance);
     
     // Show result screen
     document.getElementById('questionContainer').style.display = 'none';
     document.getElementById('resultContainer').style.display = 'block';
 }
 
-// Update progress
-function updateProgress(correct, total) {
+// Display chapter-wise performance
+function displayChapterPerformance(chapterPerformance) {
+    const chapterAnalysis = document.getElementById('chapterAnalysis');
+    chapterAnalysis.innerHTML = '';
+    
+    // Sort chapters by accuracy (highest first)
+    const sortedChapters = Object.entries(chapterPerformance).sort((a, b) => {
+        const accuracyA = a[1].correct / a[1].total;
+        const accuracyB = b[1].correct / b[1].total;
+        return accuracyB - accuracyA;
+    });
+    
+    if (sortedChapters.length === 0) {
+        chapterAnalysis.innerHTML = '<div class="text-center">कोई अध्यायवार डेटा उपलब्ध नहीं है</div>';
+        return;
+    }
+    
+    sortedChapters.forEach(([chapterName, performance]) => {
+        const accuracy = performance.total > 0 ? (performance.correct / performance.total) * 100 : 0;
+        const isWeak = accuracy < 60;
+        
+        const chapterItem = document.createElement('div');
+        chapterItem.className = `chapter-item ${isWeak ? 'weak-chapter' : ''}`;
+        chapterItem.innerHTML = `
+            <div>
+                <strong>${chapterName}</strong>
+                <div style="font-size: 0.8rem; color: #666;">
+                    सही: ${performance.correct} | गलत: ${performance.wrong} | छोड़े: ${performance.skipped}
+                </div>
+            </div>
+            <div>
+                <strong>${Math.round(accuracy)}%</strong>
+                <div style="font-size: 0.8rem; color: #666;">
+                    ${performance.correct}/${performance.total}
+                </div>
+            </div>
+        `;
+        
+        chapterAnalysis.appendChild(chapterItem);
+    });
+}
+
+// Update progress with chapter performance
+function updateProgress(correct, total, chapterPerformance) {
     const score = (correct / total) * 100;
     
+    // Update basic progress stats
     currentState.progress.testsTaken++;
     currentState.progress.averageScore = 
         ((currentState.progress.averageScore * (currentState.progress.testsTaken - 1)) + score) / currentState.progress.testsTaken;
     
     if (score > currentState.progress.bestScore) {
         currentState.progress.bestScore = score;
+    }
+    
+    // Update weak chapters
+    for (const [chapterName, performance] of Object.entries(chapterPerformance)) {
+        const accuracy = (performance.correct / performance.total) * 100;
+        
+        if (accuracy < 60) {
+            // Check if chapter is already in weak chapters
+            if (!currentState.progress.weakChapters.includes(chapterName)) {
+                currentState.progress.weakChapters.push(chapterName);
+            }
+        } else {
+            // Remove from weak chapters if accuracy improved
+            const index = currentState.progress.weakChapters.indexOf(chapterName);
+            if (index > -1) {
+                currentState.progress.weakChapters.splice(index, 1);
+            }
+        }
     }
     
     saveProgress();
